@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  react:
+    build:
+      context: .
+      dockerfile: Dockerfile.clients
+    ports:
+      - "3000:3000"
+    depends_on:
+      - express
+      - flask
+
+  express:
+    build:
+      context: .
+      dockerfile: Dockerfile.servers
+    ports:
+      - "8000:8000"
+    depends_on:
+      - flask
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/eHealthcare
+
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/eHealthcare
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/db:/data/db
